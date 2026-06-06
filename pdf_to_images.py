@@ -1260,7 +1260,7 @@ class CropEditor:
 class App:
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title("PDF Image Export")
+        self.root.title("PDF_Create_Export_Edit")
         self.root.geometry("960x680")
         self.root.minsize(720, 480)
 
@@ -1782,7 +1782,7 @@ class App:
                 images[0].save(pdf_path, "PDF")
             else:
                 images[0].save(pdf_path, "PDF", save_all=True, append_images=images[1:])
-            self.root.title(f"PDFImageExport - {os.path.basename(pdf_path)}")
+            self.root.title(f"PDF_Create_Export_Edit - {os.path.basename(pdf_path)}")
             self._set_status(f"PDF kaydedildi: {pdf_path}")
             messagebox.showinfo("Bitti", f"PDF kaydedildi:\n{pdf_path}")
         except Exception as e:
