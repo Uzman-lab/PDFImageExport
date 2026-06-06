@@ -1535,6 +1535,8 @@ class App:
         tk.Frame(toolbar, bg="#34495e", width=1).pack(side=tk.LEFT, fill=tk.Y, padx=6)
         _mkbtn(g3r2, "EN" if _current_lang == "tr" else "TR",
                self._toggle_lang, bg="#34495e", width=6).pack(side=tk.LEFT, padx=6)
+        ttk.Separator(g3r2, orient="vertical").pack(side=tk.LEFT, fill=tk.Y, padx=4)
+        _mkbtn(g3r2, "?", self.show_help, bg="#34495e", width=3).pack(side=tk.LEFT, padx=2)
 
         # ─── Thumbnail area ───
         container = tk.Frame(self.root, bg="#ecf0f1")
@@ -1955,6 +1957,287 @@ class App:
                "Yaz\u0131l\u0131m: Asri Akdeniz\n"
                "Mail: asriakdeniz@gmail.com")
         )
+
+    def show_help(self):
+        title = _t("Yard\u0131m") if _current_lang == "tr" else "Help"
+        if _current_lang == "tr":
+            text = """\
+PDF_Create_Export_Edit - Kullan\u0131m K\u0131lavuzu
+
+========================================
+1. PDF \u0130\u015flemleri
+========================================
+
+PDF Y\u00fckle:
+  Bir PDF dosyas\u0131n\u0131 a\u00e7ar ve t\u00fcm sayfalar\u0131n\u0131 resim
+  olarak g\u00f6sterir. Resimler resimler/ klas\u00f6r\u00fcne kaydedilir.
+
+PDF Metin D\u00fczenle:
+  Bir PDF'nin metin bloklar\u0131n\u0131 g\u00f6r\u00fcnt\u00fcler, d\u00fczenlemenize
+  ve yeni PDF olarak kaydetmenize olanak tan\u0131r.
+
+Sa\u011f Tu\u015fa Ekle:
+  Windows sa\u011f t\u0131k men\u00fcs\u00fcne ASRI Tools k\u0131sayollar\u0131n\u0131 ekler.
+  PDF ve resim dosyalar\u0131na sa\u011f t\u0131klayarak h\u0131zl\u0131 eri\u015fim.
+
+Sa\u011f Tu\u015ftan Kald\u0131r:
+  ASRI Tools sa\u011f t\u0131k men\u00fcs\u00fcn\u00fc kald\u0131r\u0131r.
+
+========================================
+2. Resim \u0130\u015flemleri
+========================================
+
+Resim Y\u00fckle:
+  PNG, JPG, BMP, TIFF, GIF, WEBP dosyalar\u0131n\u0131 listeye ekler.
+
+Resmi D\u00fczenle:
+  Se\u00e7ili resmi CropEditor ile d\u00fczenler.
+  Ara\u00e7lar: Kes, F\u0131r\u00e7a, Boya/Sil, Alan Se\u00e7, Metin,
+  \u00c7izgi, Tek Ok, \u00c7ift Ok, K\u0131rp
+
+Se\u00e7ilenleri PDF Yap:
+  Se\u00e7ili resimlerden tek bir PDF olu\u015fturur.
+
+Se\u00e7ileni Kaydet:
+  Se\u00e7ili resim(ler)i farkl\u0131 formatta kaydeder.
+
+========================================
+3. CropEditor Ara\u00e7lar\u0131
+========================================
+
+Kes:      Fare ile alan\u0131 renklendirir/boyar.
+F\u0131r\u00e7a: Serbest \u00e7izim yapar.
+Boya/Sil: Belirtilen renkle boyar veya siler.
+Alan Se\u00e7: Kare/dikd\u00f6rtgen se\u00e7im yapar.
+Metin:    T\u0131klanan yere metin ekler.
+\u00c7izgi:    \u00c7izgi \u00e7izer.
+Tek Ok:   Tek y\u00f6nl\u00fc ok \u00e7izer.
+\u00c7ift Ok: \u00c7ift y\u00f6nl\u00fc ok \u00e7izer.
+K\u0131rp:     Alan se\u00e7ip g\u00f6r\u00fcnt\u00fcy\u00fc k\u0131rpar.
+
+Se\u00e7im Sonras\u0131 \u0130\u015flemler:
+- Kes: Se\u00e7ili alan\u0131 beyaz yapar
+- Boya: Se\u00e7ili alan\u0131 renklendirir
+- Kopyala: Se\u00e7imi kopyalar, Uygula ile yap\u0131\u015ft\u0131r\u0131n
+- Ta\u015f\u0131: Se\u00e7imi ta\u015f\u0131r, Uygula ile yerle\u015ftirin
+- D\u00f6nd\u00fcr: Se\u00e7imi a\u00e7\u0131l\u0131 d\u00f6nd\u00fcr\u00fcr
+- Yans\u0131: Yatay/Dikey yans\u0131tma
+
+K\u00f6\u015fe Tutama\u00e7lar\u0131:
+- Beyaz kareler: S\u00fcr\u00fckleyerek d\u00f6nd\u00fcrme
+- Turuncu kareler: Oransal \u00f6l\u00e7ekleme
+- K\u0131rm\u0131z\u0131 kareler: Serbest yeniden boyutland\u0131rma
+
+Alt \u00c7ubuk:
+- Uygula: Ta\u015f\u0131ma/kopyalamay\u0131 tamamlar
+- Geri Al: Son i\u015flemi geri al\u0131r
+- Kaydet: Dosyan\u0131n \u00fczerine kaydeder
+- Farkl\u0131 Kaydet: Yeni format/konumda kaydeder
+
+========================================
+4. PDF Metin D\u00fczenleyici
+========================================
+- Sol panelde metin bloklar\u0131n\u0131 g\u00f6r\u00fcn
+- Bir blo\u011fa t\u0131klay\u0131n, i\u00e7eri\u011fi sa\u011f panelde d\u00fczenleyin
+- Uygula: De\u011fi\u015fikli\u011fi ge\u00e7ici olarak uygular
+- PDF Kaydet: De\u011fi\u015fikliklerle yeni PDF olu\u015fturur
+- Tam Ekran: D\u00fczenleyiciyi b\u00fcy\u00fct\u00fcr
+- \u25c0 \u25b6: Sayfalar aras\u0131 gezinti
+
+========================================
+5. Dil Se\u00e7imi
+========================================
+- EN butonu: T\u00fcrk\u00e7e'den \u0130ngilizce'ye ge\u00e7er
+- TR butonu: \u0130ngilizce'den T\u00fcrk\u00e7e'ye ge\u00e7er
+- Dil se\u00e7imi kaydedilir, program yeniden ba\u015flat\u0131l\u0131r
+
+========================================
+6. Komut Sat\u0131r\u0131 Kullan\u0131m\u0131
+========================================
+--extract-pdf <dosya.pdf>
+  PDF'deki t\u00fcm sayfalar\u0131 resim olarak \u00e7\u0131kar\u0131r.
+
+--edit-pdf <dosya.pdf>
+  PDF metin d\u00fczenleyiciyi a\u00e7ar.
+
+--edit-image <resim.png>
+  CropEditor ile resmi d\u00fczenler.
+
+--make-pdf <resim.png>
+  Tek resmi PDF'e \u00e7evirir.
+
+--combine-pdf <resim1.png> <resim2.png> ...
+  Birden \u00e7ok resmi tek PDF'te birle\u015ftirir.
+
+--edit-multi <resim1.png> <resim2.png> ...
+  Resimleri CropEditor ile a\u00e7ar (se\u00e7imli).
+
+--extract-pdf-gui <dosya.pdf>
+  PDF resimlerini \u00e7\u0131kar\u0131p CropEditor ile a\u00e7ar.
+
+========================================
+7. S\u0131ralama
+========================================
+- \u2191 Yukar\u0131 / \u2193 A\u015fa\u011f\u0131: Se\u00e7ili g\u00f6rseli ta\u015f\u0131r
+- S\u00fcr\u00fckle-b\u0131rak: G\u00f6rselleri fareyle s\u00fcr\u00fckleyerek s\u0131ralay\u0131n
+
+========================================
+8. Hakk\u0131nda
+========================================
+PDF_Create_Export_Edit
+Yaz\u0131l\u0131m: Asri Akdeniz
+Mail: asriakdeniz@gmail.com"""
+        else:
+            text = """\
+PDF_Create_Export_Edit - User Guide
+
+========================================
+1. PDF Operations
+========================================
+
+Load PDF:
+  Opens a PDF file and displays all pages as images.
+  Images are saved to the resimler/ folder.
+
+Edit PDF Text:
+  View and edit text blocks of a PDF, save as a new PDF.
+
+Add to Right-Click:
+  Adds ASRI Tools shortcuts to the Windows context menu.
+  Quick access by right-clicking PDF and image files.
+
+Remove from Right-Click:
+  Removes ASRI Tools from the right-click menu.
+
+========================================
+2. Image Operations
+========================================
+
+Load Image(s):
+  Add PNG, JPG, BMP, TIFF, GIF, WEBP files to the list.
+
+Edit Image:
+  Opens the selected image in the CropEditor.
+  Tools: Cut, Brush, Paint/Erase, Select Area, Text,
+  Line, Single Arrow, Double Arrow, Crop
+
+Make PDF from Selected:
+  Creates a single PDF from selected images.
+
+Save Selected:
+  Saves selected image(s) in a different format.
+
+========================================
+3. CropEditor Tools
+========================================
+
+Cut:      Drag to color/fill an area.
+Brush:    Freehand drawing.
+Paint/Erase: Paint with selected color or erase.
+Select Area: Make rectangular selection.
+Text:     Click to add text.
+Line:     Draw a line.
+Single Arrow: Draw a single-headed arrow.
+Double Arrow: Draw a double-headed arrow.
+Crop:     Select area and crop the image.
+
+Selection Actions:
+- Cut: Makes selected area white
+- Fill: Colors the selected area
+- Copy: Copies selection, paste with Apply
+- Move: Moves selection, place with Apply
+- Rotate: Rotates selection by any angle
+- Flip: Horizontal/Vertical flip
+
+Corner Handles:
+- White squares: Drag to rotate
+- Orange squares: Proportional scale
+- Red squares: Free resize
+
+Bottom Bar:
+- Apply: Confirm move/copy action
+- Undo: Revert the last action
+- Save: Overwrite the file
+- Save As: Save in new format/location
+
+========================================
+4. PDF Text Editor
+========================================
+- View text blocks in the left panel
+- Click a block, edit content in the right panel
+- Apply: Temporarily apply the change
+- Save PDF: Create a new PDF with changes
+- Fullscreen: Enlarge the editor view
+- \u25c0 \u25b6: Navigate between pages
+
+========================================
+5. Language Selection
+========================================
+- EN button: Switch from Turkish to English
+- TR button: Switch from English to Turkish
+- Language preference is saved, program restarts
+
+========================================
+6. Command Line Usage
+========================================
+--extract-pdf <file.pdf>
+  Extracts all PDF pages as images.
+
+--edit-pdf <file.pdf>
+  Opens the PDF text editor.
+
+--edit-image <image.png>
+  Edits the image in CropEditor.
+
+--make-pdf <image.png>
+  Converts a single image to PDF.
+
+--combine-pdf <img1.png> <img2.png> ...
+  Combines multiple images into one PDF.
+
+--edit-multi <img1.png> <img2.png> ...
+  Opens images in CropEditor (selective).
+
+--extract-pdf-gui <file.pdf>
+  Extracts PDF images and opens in CropEditor.
+
+========================================
+7. Ordering
+========================================
+- \u2191 Move Up / \u2193 Move Down: Move selected image
+- Drag-and-drop: Reorder images by dragging
+
+========================================
+8. About
+========================================
+PDF_Create_Export_Edit
+Software: Asri Akdeniz
+Mail: asriakdeniz@gmail.com"""
+
+        win = tk.Toplevel(self.root)
+        win.title(title)
+        win.geometry("700x600")
+        win.minsize(500, 400)
+
+        frame = tk.Frame(win)
+        frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+
+        text_widget = tk.Text(frame, wrap=tk.WORD, font=("Consolas", 10),
+                              bg="#1e1e1e", fg="#d4d4d4", insertbackground="white")
+        text_widget.insert("1.0", text)
+        text_widget.config(state=tk.DISABLED)
+
+        scrollbar = tk.Scrollbar(frame, orient=tk.VERTICAL, command=text_widget.yview)
+        text_widget.configure(yscrollcommand=scrollbar.set)
+
+        text_widget.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        btn_frame = tk.Frame(win, bg="#f8f9fa")
+        btn_frame.pack(fill=tk.X, pady=(0, 10))
+        tk.Button(btn_frame, text=_t("Kapat"), command=win.destroy,
+                  bg="#e74c3c", fg="white", font=("Segoe UI", 10, "bold"),
+                  relief="flat", bd=0, cursor="hand2", width=12).pack(pady=4)
 
     def crop_selected(self):
         selected = [p for p, v in self.selection.items() if v.get()]
