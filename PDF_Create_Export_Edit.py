@@ -179,7 +179,7 @@ _TRANS = {
     "■ Özel Renk...": "■ Custom Color...",
     "Döndür 90": "Rotate 90",
     # Context menu
-    "ASRI Tools": "ASRI Tools",
+    "PDF Create Export Edit": "PDF Create Export Edit",
     "PDF Resim Çıkar": "Extract PDF Images",
     "PDF Metin Düzenle": "Edit PDF Text",
     "PDF Resim Çıkar (Seçimli)": "Extract PDF Images (Selective)",
@@ -190,8 +190,8 @@ _TRANS = {
     # About
     "PDF_Create_Export_Edit\n\nYazılım: Asri Akdeniz\nMail: asriakdeniz@gmail.com": "PDF_Create_Export_Edit\n\nSoftware: Asri Akdeniz\nMail: asriakdeniz@gmail.com",
     # Context menu notifications
-    "ASRI Tools sağ tık menüsüne eklendi.\nPDF ve resim dosyalarında ASRI Tools altında kullanabilirsiniz.": "ASRI Tools added to right-click menu.\nUse under ASRI Tools for PDF and image files.",
-    "ASRI Tools sağ tık menüsünden kaldırıldı.": "ASRI Tools removed from right-click menu.",
+    "PDF Create Export Edit sağ tık menüsüne eklendi.\nPDF ve resim dosyalarında PDF Create Export Edit altında kullanabilirsiniz.": "PDF Create Export Edit added to right-click menu.\nUse under PDF Create Export Edit for PDF and image files.",
+    "PDF Create Export Edit sağ tık menüsünden kaldırıldı.": "PDF Create Export Edit removed from right-click menu.",
 }
 
 def _t(text):
@@ -1977,11 +1977,11 @@ PDF Metin D\u00fczenle:
   ve yeni PDF olarak kaydetmenize olanak tan\u0131r.
 
 Sa\u011f Tu\u015fa Ekle:
-  Windows sa\u011f t\u0131k men\u00fcs\u00fcne ASRI Tools k\u0131sayollar\u0131n\u0131 ekler.
+  Windows sa\u011f t\u0131k men\u00fcs\u00fcne PDF Create Export Edit k\u0131sayollar\u0131n\u0131 ekler.
   PDF ve resim dosyalar\u0131na sa\u011f t\u0131klayarak h\u0131zl\u0131 eri\u015fim.
 
 Sa\u011f Tu\u015ftan Kald\u0131r:
-  ASRI Tools sa\u011f t\u0131k men\u00fcs\u00fcn\u00fc kald\u0131r\u0131r.
+  PDF Create Export Edit sa\u011f t\u0131k men\u00fcs\u00fcn\u00fc kald\u0131r\u0131r.
 
 ========================================
 2. Resim \u0130\u015flemleri
@@ -2103,11 +2103,11 @@ Edit PDF Text:
   View and edit text blocks of a PDF, save as a new PDF.
 
 Add to Right-Click:
-  Adds ASRI Tools shortcuts to the Windows context menu.
+  Adds PDF Create Export Edit shortcuts to the Windows context menu.
   Quick access by right-clicking PDF and image files.
 
 Remove from Right-Click:
-  Removes ASRI Tools from the right-click menu.
+  Removes PDF Create Export Edit from the right-click menu.
 
 ========================================
 2. Image Operations
@@ -2329,7 +2329,7 @@ Mail: asriakdeniz@gmail.com"""
         self._show_thumbs()
         self._set_status(_t("Sıralama güncellendi"))
 
-    # ───── Context menu (Windows sag tus - ASRI Tools) ─────
+    # ───── Context menu (Windows sag tus - PDF Create Export Edit) ─────
     def add_context_menu(self):
         import winreg
         if getattr(sys, "frozen", False):
@@ -2353,8 +2353,8 @@ Mail: asriakdeniz@gmail.com"""
             """Create parent verb with ExtendedSubCommandsKey + sub-items under ctx_key."""
             # Parent verb
             key = winreg.CreateKey(winreg.HKEY_CURRENT_USER, base)
-            winreg.SetValueEx(key, "", 0, winreg.REG_SZ, "ASRI Tools")
-            winreg.SetValueEx(key, "MUIVerb", 0, winreg.REG_SZ, "ASRI Tools")
+            winreg.SetValueEx(key, "", 0, winreg.REG_SZ, "PDF Create Export Edit")
+            winreg.SetValueEx(key, "MUIVerb", 0, winreg.REG_SZ, "PDF Create Export Edit")
             full_ctx = "SystemFileAssociations" + ctx_key
             winreg.SetValueEx(key, "ExtendedSubCommandsKey", 0, winreg.REG_SZ, full_ctx)
             if icon:
@@ -2400,8 +2400,8 @@ Mail: asriakdeniz@gmail.com"""
 
         messagebox.showinfo(
             _t("Bitti"),
-            _t("ASRI Tools sa\u011f t\u0131k men\u00fcs\u00fcne eklendi.\n"
-               "PDF ve resim dosyalar\u0131nda ASRI Tools alt\u0131nda kullanabilirsiniz.")
+            _t("PDF Create Export Edit sa\u011f t\u0131k men\u00fcs\u00fcne eklendi.\n"
+               "PDF ve resim dosyalar\u0131nda PDF Create Export Edit alt\u0131nda kullanabilirsiniz.")
         )
 
     def remove_context_menu(self):
@@ -2432,7 +2432,7 @@ Mail: asriakdeniz@gmail.com"""
         for ext, key in targets:
             _del(f"{base}\\{ext}\\shell\\{key}")
             _del(f"{base}\\{ext}\\{key}")
-        messagebox.showinfo(_t("Bitti"), _t("ASRI Tools sağ tık menüsünden kaldırıldı."))
+        messagebox.showinfo(_t("Bitti"), _t("PDF Create Export Edit sağ tık menüsünden kaldırıldı."))
 
     def _extract_pdf(self, path):
         self._set_status(_t("PDF resimleri çıkarılıyor..."))
