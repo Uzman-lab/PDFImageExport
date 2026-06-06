@@ -18,6 +18,200 @@ def _app_dir():
 APP_DIR = _app_dir()
 RESIMLER_DIR = os.path.join(APP_DIR, "resimler")
 
+# ─── Language / Translation support ───
+import json
+
+_SETTINGS_DIR = os.path.join(os.environ.get("APPDATA", os.path.expanduser("~")), "PDF_Create_Export_Edit")
+_SETTINGS_FILE = os.path.join(_SETTINGS_DIR, "settings.json")
+
+def _load_settings():
+    try:
+        with open(_SETTINGS_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+def _save_settings(data):
+    try:
+        os.makedirs(_SETTINGS_DIR, exist_ok=True)
+        with open(_SETTINGS_FILE, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
+
+_current_lang = _load_settings().get("lang", "tr")
+
+_TRANS = {
+    # General UI
+    "PDF Yükle": "Load PDF",
+    "Resim Yükle": "Load Image(s)",
+    "Tümünü Seç": "Select All",
+    "Seçimi Kaldır": "Deselect All",
+    "PDF Metin Düzenle": "Edit PDF Text",
+    "↑ Yukarı": "↑ Move Up",
+    "↓ Aşağı": "↓ Move Down",
+    "Resmi Düzenle": "Edit Image",
+    "Seçilenleri PDF Yap": "Make PDF from Selected",
+    "Seçileni Kaydet": "Save Selected",
+    "Hakkında": "About",
+    "Sağ Tuşa Ekle": "Add to Right-Click",
+    "Sağ Tuştan Kaldır": "Remove from Right-Click",
+    "PDF ↔ Resim Dönüştürücü": "PDF ↔ Image Converter",
+    # CropEditor mode labels
+    "Kes": "Cut",
+    "F\u0131r\u00e7a": "Brush",
+    "Boya/Sil": "Paint/Erase",
+    "Alan Se\u00e7": "Select Area",
+    "Metin": "Text",
+    "\u00c7izgi": "Line",
+    "Tek Ok": "Single Arrow",
+    "\u00c7ift Ok": "Double Arrow",
+    "K\u0131rp": "Crop",
+    # CropEditor tooltips
+    "Alan renklendirmek i\u00e7in s\u00fcr\u00fckleyin": "Drag to color the area",
+    "F\u0131r\u00e7a ile \u00e7izin": "Draw with brush",
+    "Se\u00e7ili renk ile boyay\u0131n": "Paint with selected color",
+    "Se\u00e7im yap\u0131n: Ta\u015f\u0131/Kes/Boya": "Select: Move/Cut/Paint",
+    "Metin eklemek i\u00e7in t\u0131klay\u0131n": "Click to add text",
+    "\u00c7izgi \u00e7ekmek i\u00e7in s\u00fcr\u00fckleyin": "Drag to draw a line",
+    "Ok \u00e7ekmek i\u00e7in s\u00fcr\u00fckleyin": "Drag to draw an arrow",
+    "\u00c7ift y\u00f6nl\u00fc ok \u00e7ekin": "Draw a double-headed arrow",
+    "G\u00f6r\u00fcnt\u00fcy\u00fc k\u0131rpmak i\u00e7in alan se\u00e7in": "Select area to crop image",
+    # CropEditor selection buttons
+    "✂ Kes": "✂ Cut",
+    "Boya": "Fill",
+    "Kopyala": "Copy",
+    "Taşı": "Move",
+    "Döndür": "Rotate",
+    "↔ Yansı": "↔ Flip H",
+    "↕ Yansı": "↕ Flip V",
+    # CropEditor controls
+    "Renk": "Color",
+    "■ Palet": "■ Palette",
+    "Kal\u0131nl\u0131k": "Thickness",
+    "Yaz\u0131 Boyutu": "Font Size",
+    # CropEditor bottom bar
+    "Uygula": "Apply",
+    "Geri Al": "Undo",
+    "Kaydet": "Save",
+    "Farklı Kaydet": "Save As",
+    "Kapat": "Close",
+    # Status messages
+    "Araç seçin": "Select a tool",
+    "Köşeyi sürükleyerek döndürün": "Drag corner to rotate",
+    "{closest} kenarından sürükleyin": "Drag from {closest} edge",
+    "Döndürme: {deg}°": "Rotation: {deg}°",
+    "Yeniden boyutlandırma: {nw}x{nh}": "Resize: {nw}x{nh}",
+    "Oransal küçült/büyüt: köşeden sürükleyin": "Scale: drag from corner",
+    "Oransal: {nw}x{nh}": "Scale: {nw}x{nh}",
+    "Döndürüldü: {deg}°": "Rotated: {deg}°",
+    "Ölçeklendi": "Scaled",
+    "Yeniden boyutlandı": "Resized",
+    "Seçimi sürükleyin": "Drag the selection",
+    "Kes: ({ix1},{iy1}) → ({ix2},{iy2})": "Cut: ({ix1},{iy1}) → ({ix2},{iy2})",
+    "Görüntü kırpıldı: {w}x{h}": "Image cropped: {w}x{h}",
+    "Taşı iptal": "Move cancelled",
+    "Taşı: Uygula'ya basın": "Move: press Apply",
+    "Seçim taşındı": "Selection moved",
+    "Alan seçildi": "Area selected",
+    "Metin eklendi: \"{text}\"": "Text added: \"{text}\"",
+    "90 derece döndürüldü": "Rotated 90°",
+    "Alan renklendirildi": "Area colored",
+    "Taşı uygulandı": "Move applied",
+    "Alan boyandı": "Area painted",
+    "Alan kesildi": "Area cut",
+    "Kopya oluştu, Uygula ile yapıştırın": "Copy created, paste with Apply",
+    "Yatay yansıtıldı": "Flipped horizontally",
+    "Dikey yansıtıldı": "Flipped vertically",
+    "Alan döndürüldü: {angle}°": "Area rotated: {angle}°",
+    "Seçimi sürükleyip bırakın": "Drag and release to move",
+    "Geri alındı": "Undone",
+    "Hazır": "Ready",
+    "{n} görsel": "{n} image(s)",
+    "0 görsel": "0 images",
+    "{n} görsel yüklendi": "{n} image(s) loaded",
+    "Sıralama güncellendi": "Order updated",
+    "PDF işleniyor...": "Processing PDF...",
+    "Hata: {e}": "Error: {e}",
+    "Sayfa {n} - blok {idx} güncellendi": "Page {n} - block {idx} updated",
+    "PDF oluşturuluyor...": "Creating PDF...",
+    "PDF kaydedildi: {path}": "PDF saved: {path}",
+    "{n} resim kaydedildi": "{n} image(s) saved",
+    "PDF resimleri çıkarılıyor...": "Extracting PDF images...",
+    # Dialog titles / messages
+    "D\xfczenle": "Edit",
+    "Renk Se\xe7": "Choose Color",
+    "Renk Paleti": "Color Palette",
+    "Metin Ekle": "Add Text",
+    "PDF Metin Düzenle - {name}": "PDF Text Editor - {name}",
+    "Kayıt klasörü": "Save folder",
+    "Tam Ekran": "Fullscreen",
+    "Pencere": "Window",
+    "☒ Tam Ekran": "☒ Fullscreen",
+    "☒ Pencere": "☒ Window",
+    "Metin Blokları": "Text Blocks",
+    "Metin İçeriği": "Text Content",
+    "PDF Kaydet": "Save PDF",
+    "Metin:": "Text:",
+    "Ekle": "Add",
+    "Açı (0-360):": "Angle (0-360):",
+    "%{zoom}%": "%{zoom}%",
+    # Messagebox content
+    "Resim kaydedildi.": "Image saved.",
+    "Resim kaydedildi:\n{path}": "Image saved:\n{path}",
+    "PDF açılamadı: {e}": "Could not open PDF: {e}",
+    "Uygulanamadı: {e}": "Could not apply: {e}",
+    "PDF kaydedildi:\n{out}\n\nAçmak ister misiniz?": "PDF saved:\n{out}\n\nOpen it?",
+    "Kaydedilemedi: {e}": "Could not save: {e}",
+    "Önce resim seçin": "Select images first",
+    "PDF kaydedildi:\n{pdf_path}": "PDF saved:\n{pdf_path}",
+    "PDF oluşturulamadı:\n{e}": "Could not create PDF:\n{e}",
+    "{n} resim kaydedildi.": "{n} image(s) saved.",
+    "PDF resimleri çıkarılamadı:\n{e}": "Could not extract PDF images:\n{e}",
+    "PDF oluşturuldu:\n{pdf_path}": "PDF created:\n{pdf_path}",
+    "Desteklenmeyen dosya: {ext}": "Unsupported file: {ext}",
+    "PDF kaydı eklenemedi: {e}": "Could not add PDF entry: {e}",
+    "{ext} kaydı eklenemedi: {e}": "Could not add {ext} entry: {e}",
+    # Misc
+    "Sayfa çok büyük, render edilemiyor": "Page too large, cannot render",
+    "Tüm Formatlar": "All Formats",
+    "Renk Seçin:": "Choose Color:",
+    "■ Özel Renk...": "■ Custom Color...",
+    "Döndür 90": "Rotate 90",
+    # Context menu
+    "ASRI Tools": "ASRI Tools",
+    "PDF Resim Çıkar": "Extract PDF Images",
+    "PDF Metin Düzenle": "Edit PDF Text",
+    "PDF Resim Çıkar (Seçimli)": "Extract PDF Images (Selective)",
+    "Resim Düzenle": "Edit Image",
+    "PDF yap": "Make PDF",
+    "Tek Tek PDF yap": "Make PDF (Individual)",
+    "Seçimli PDF yap": "Make PDF (Selective)",
+    # About
+    "PDF_Create_Export_Edit\n\nYazılım: Asri Akdeniz\nMail: asriakdeniz@gmail.com": "PDF_Create_Export_Edit\n\nSoftware: Asri Akdeniz\nMail: asriakdeniz@gmail.com",
+    # Context menu notifications
+    "ASRI Tools sağ tık menüsüne eklendi.\nPDF ve resim dosyalarında ASRI Tools altında kullanabilirsiniz.": "ASRI Tools added to right-click menu.\nUse under ASRI Tools for PDF and image files.",
+    "ASRI Tools sağ tık menüsünden kaldırıldı.": "ASRI Tools removed from right-click menu.",
+}
+
+def _t(text):
+    if _current_lang == "tr":
+        return text
+    return _TRANS.get(text, text)
+
+def _set_lang(lang):
+    global _current_lang
+    _current_lang = lang
+    _save_settings({"lang": lang})
+
+
+def restart_app():
+    python = sys.executable
+    args = [python] + sys.argv
+    if getattr(sys, "frozen", False):
+        args = [sys.executable] + sys.argv[1:]
+    os.execl(python, *args)
+
 _btn_style = {
     "font": ("Segoe UI", 10, "bold"),
     "relief": "flat",
@@ -29,6 +223,7 @@ _btn_style = {
 
 
 def _mkbtn(parent, text, command, bg="#3498db", fg="white", width=16, state=None):
+    text = _t(text)
     btn = tk.Button(
         parent, text=text, command=command,
         bg=bg, fg=fg, activebackground=bg, activeforeground=fg,
@@ -58,7 +253,7 @@ def _darken(hex_color, factor=0.85):
 class ToolTip:
     def __init__(self, widget, text):
         self.widget = widget
-        self.text = text
+        self.text = _t(text)
         self.tip = None
         self.after_id = None
         widget.bind("<Enter>", self._enter)
@@ -115,17 +310,17 @@ class CropEditor:
     }
 
     MODE_LABELS = {
-        "crop": "Kes", "paint": "Firca", "eraser": "Boya/Sil",
-        "selection": "Alan Sec", "text": "Metin", "line": "Cizgi",
-        "arrow": "Tek Ok", "arrow_both": "Cift Ok", "kirp": "Kirp",
+        "crop": "Kes", "paint": "F\u0131r\u00e7a", "eraser": "Boya/Sil",
+        "selection": "Alan Se\u00e7", "text": "Metin", "line": "\u00c7izgi",
+        "arrow": "Tek Ok", "arrow_both": "\u00c7ift Ok", "kirp": "K\u0131rp",
     }
 
     HELP = {
-        "crop": "Alan renklendirmek icin surukleyin", "paint": "Firca ile cizin",
-        "eraser": "Secili renk ile boyayin", "selection": "Secim yapin: Tasi/Kes/Boya",
-        "text": "Metin eklemek icin tiklayin", "line": "Cizgi cekmek icin surukleyin",
-        "arrow": "Ok cekmek icin surukleyin", "arrow_both": "Cift yonlu ok cekin",
-        "kirp": "Goruntuyu kirpmak icin alan secin",
+        "crop": "Alan renklendirmek i\u00e7in s\u00fcr\u00fckleyin", "paint": "F\u0131r\u00e7a ile \u00e7izin",
+        "eraser": "Se\u00e7ili renk ile boyay\u0131n", "selection": "Se\u00e7im yap\u0131n: Ta\u015f\u0131/Kes/Boya",
+        "text": "Metin eklemek i\u00e7in t\u0131klay\u0131n", "line": "\u00c7izgi \u00e7ekmek i\u00e7in s\u00fcr\u00fckleyin",
+        "arrow": "Ok \u00e7ekmek i\u00e7in s\u00fcr\u00fckleyin", "arrow_both": "\u00c7ift y\u00f6nl\u00fc ok \u00e7ekin",
+        "kirp": "G\u00f6r\u00fcnt\u00fcy\u00fc k\u0131rpmak i\u00e7in alan se\u00e7in",
     }
 
     def __init__(self, parent, image_path, on_save=None):
@@ -166,7 +361,7 @@ class CropEditor:
         self.handle_drag = None
 
         self.win = tk.Toplevel(parent)
-        self.win.title(f"Duzenle \u2014 {os.path.basename(image_path)}")
+        self.win.title(f"{_t('D\xfczenle')} \u2014 {os.path.basename(image_path)}")
         self.win.geometry("1100x760")
         self.win.minsize(900, 600)
 
@@ -182,7 +377,7 @@ class CropEditor:
         for mode_id in self.ICONS:
             row = tk.Frame(left, bg="#2c3e50")
             row.pack(fill=tk.X, padx=4, pady=2)
-            tk.Label(row, text=self.MODE_LABELS.get(mode_id, mode_id),
+            tk.Label(row, text=_t(self.MODE_LABELS.get(mode_id, mode_id)),
                      bg="#2c3e50", fg="#ccc", font=("Segoe UI", 8),
                      anchor="w", width=10).pack(side=tk.LEFT)
             icon = self.ICONS[mode_id]
@@ -206,31 +401,31 @@ class CropEditor:
             disabledforeground="#ddd", relief="flat", bd=0,
             width=8, cursor="hand2", state=tk.DISABLED,
         )
-        self.btn_makas = tk.Button(self.sel_frame, text="\u2702 Kes",
+        self.btn_makas = tk.Button(self.sel_frame, text=_t("\u2702 Kes"),
                                    command=self._sel_cut,
                                    **_sel_btn_style("#c0392b"))
         self.btn_makas.pack(pady=1)
-        self.btn_boya = tk.Button(self.sel_frame, text="Boya",
+        self.btn_boya = tk.Button(self.sel_frame, text=_t("Boya"),
                                   command=self._sel_fill,
                                   **_sel_btn_style("#27ae60"))
         self.btn_boya.pack(pady=1)
-        self.btn_kopyala = tk.Button(self.sel_frame, text="Kopyala",
+        self.btn_kopyala = tk.Button(self.sel_frame, text=_t("Kopyala"),
                                      command=self._sel_copy,
                                      **_sel_btn_style("#16a085"))
         self.btn_kopyala.pack(pady=1)
-        self.btn_tasi = tk.Button(self.sel_frame, text="Tasi",
+        self.btn_tasi = tk.Button(self.sel_frame, text=_t("Ta\u015f\u0131"),
                                    command=self._enter_move,
                                    **_sel_btn_style("#2980b9"))
         self.btn_tasi.pack(pady=1)
-        self.btn_dondur = tk.Button(self.sel_frame, text="D\xf6nd\xfcr",
+        self.btn_dondur = tk.Button(self.sel_frame, text=_t("D\xf6nd\xfcr"),
                                     command=self._sel_rotate,
                                     **_sel_btn_style("#8e44ad"))
         self.btn_dondur.pack(pady=1)
-        self.btn_flip_h = tk.Button(self.sel_frame, text="\u2194 Yans\u0131",
+        self.btn_flip_h = tk.Button(self.sel_frame, text=_t("\u2194 Yans\u0131"),
                                     command=self._sel_flip_h,
                                     **_sel_btn_style("#d35400"))
         self.btn_flip_h.pack(pady=1)
-        self.btn_flip_v = tk.Button(self.sel_frame, text="\u2195 Yans\u0131",
+        self.btn_flip_v = tk.Button(self.sel_frame, text=_t("\u2195 Yans\u0131"),
                                     command=self._sel_flip_v,
                                     **_sel_btn_style("#d35400"))
         self.btn_flip_v.pack(pady=1)
@@ -239,9 +434,9 @@ class CropEditor:
 
         # ─── Color palette button ───
         from tkinter import colorchooser
-        tk.Label(ctrl_frame, text="Renk", bg="#2c3e50", fg="#bbb",
+        tk.Label(ctrl_frame, text=_t("Renk"), bg="#2c3e50", fg="#bbb",
                  font=("Segoe UI", 8)).pack()
-        tk.Button(ctrl_frame, text="\u25A0 Palet",
+        tk.Button(ctrl_frame, text=_t("\u25A0 Palet"),
                   font=("Segoe UI", 9, "bold"),
                   bg="#34495e", fg="white", relief="flat", bd=0,
                   cursor="hand2", command=self._open_palette).pack(pady=1)
@@ -252,14 +447,14 @@ class CropEditor:
                                     command=lambda: self._pick_color(colorchooser))
         self.picker_btn.pack(pady=1)
 
-        tk.Label(ctrl_frame, text="Kalinlik", bg="#2c3e50", fg="#bbb",
+        tk.Label(ctrl_frame, text=_t("Kal\u0131nl\u0131k"), bg="#2c3e50", fg="#bbb",
                  font=("Segoe UI", 8)).pack()
         self.size_var = tk.IntVar(value=self.brush_size)
         tk.Spinbox(ctrl_frame, from_=1, to=30, width=3,
                    textvariable=self.size_var, font=("Segoe UI", 9),
                    command=self._update_brush_size, bd=0).pack()
 
-        tk.Label(ctrl_frame, text="Yazi Boyutu", bg="#2c3e50", fg="#bbb",
+        tk.Label(ctrl_frame, text=_t("Yaz\u0131 Boyutu"), bg="#2c3e50", fg="#bbb",
                  font=("Segoe UI", 8)).pack()
         self.font_var = tk.IntVar(value=self.font_size)
         tk.Spinbox(ctrl_frame, from_=8, to=200, width=3,
@@ -311,7 +506,7 @@ class CropEditor:
         info = tk.Frame(self.win, bg="#f8f9fa", height=26)
         info.pack(fill=tk.X)
         info.pack_propagate(False)
-        self.status = tk.Label(info, text="Arac secin", bg="#f8f9fa",
+        self.status = tk.Label(info, text=_t("Ara\u00e7 se\u00e7in"), bg="#f8f9fa",
                                fg="#555", font=("Segoe UI", 9))
         self.status.pack(side=tk.LEFT, padx=10)
         self.size_label = tk.Label(info, text=f"{self.orig_w}x{self.orig_h}",
@@ -361,7 +556,7 @@ class CropEditor:
             "start_angle": math.atan2(e.y - ccy, e.x - ccx),
             "total_angle": 0,
         }
-        self.status.config(text="Koseyi surukleyerek dondurun")
+        self.status.config(text=_t("Köşeyi sürükleyerek döndürün"))
 
     def _handle_resize_start(self, e):
         if not self.sel_rect:
@@ -388,7 +583,7 @@ class CropEditor:
             "start_rect": self.sel_rect,
             "start_size": (x2 - x1, y2 - y1),
         }
-        self.status.config(text=f"{closest} kenarindan surukleyin")
+        self.status.config(text=_t("{closest} kenarından sürükleyin").replace("{closest}", closest))
 
     def _handle_drag_rotate(self, e):
         if not self.handle_drag or self.handle_drag["type"] != "rotate":
@@ -409,7 +604,7 @@ class CropEditor:
             ry = cy - rotated.height / 2
             self._hide_float()
             self._show_float(rx, ry, image=rotated)
-        self.status.config(text=f"Dondurme: {deg:.0f}\xb0")
+        self.status.config(text=_t("Döndürme: {deg}°").replace("{deg}", f"{deg:.0f}"))
 
     def _handle_drag_resize(self, e):
         if not self.handle_drag or self.handle_drag["type"] != "resize":
@@ -435,7 +630,7 @@ class CropEditor:
         self.sel_rect = new_rect
         self._hide_sel()
         self._redraw_sel()
-        self.status.config(text=f"Yeniden boyutlandirma: {nw}x{nh}")
+        self.status.config(text=_t("Yeniden boyutlandırma: {nw}x{nh}").replace("{nw}", str(nw)).replace("{nh}", str(nh)))
 
     def _handle_scale_start(self, e, hcx, hcy):
         if not self.sel_rect:
@@ -463,7 +658,7 @@ class CropEditor:
             self.handle_drag["opposite"] = (x2, y1, x2, y1)  # bottom-left drag → top-right fixed
         else:
             self.handle_drag["opposite"] = (x1, y1, x1, y1)  # bottom-right drag → top-left fixed
-        self.status.config(text="Oransal kucult/buyut: koseden surukleyin")
+        self.status.config(text=_t("Oransal küçült/büyüt: köşeden sürükleyin"))
 
     def _handle_drag_scale(self, e):
         if not self.handle_drag or self.handle_drag["type"] != "scale":
@@ -497,7 +692,7 @@ class CropEditor:
         self.sel_rect = new_rect
         self._hide_sel()
         self._redraw_sel()
-        self.status.config(text=f"Oransal: {nw}x{nh}")
+        self.status.config(text=_t("Oransal: {nw}x{nh}").replace("{nw}", str(nw)).replace("{nh}", str(nh)))
 
     def _handle_release(self):
         if not self.handle_drag:
@@ -524,7 +719,7 @@ class CropEditor:
                 self.sel_content = None
                 self._render()
                 self._redraw_sel()
-                self.status.config(text=f"Donduruldu: {deg:.0f}\xb0")
+                self.status.config(text=_t("Döndürüldü: {deg}°").replace("{deg}", f"{deg:.0f}"))
         elif self.handle_drag["type"] in ("resize", "scale"):
             if self.sel_rect:
                 x1, y1, x2, y2 = self.sel_rect
@@ -571,7 +766,7 @@ class CropEditor:
             self.btn_dondur.config(state=tk.DISABLED)
             self.btn_flip_h.config(state=tk.DISABLED)
             self.btn_flip_v.config(state=tk.DISABLED)
-        self.status.config(text=self.HELP.get(mode, ""))
+        self.status.config(text=_t(self.HELP.get(mode, "")))
 
     # ───── Color / Size ─────
     def _set_color(self, color):
@@ -702,7 +897,7 @@ class CropEditor:
                 x1, y1, x2, y2 = self.sel_rect
                 self.sel_move_offset = (ix - x1, iy - y1)
                 self.sel_content = self.img.crop(self.sel_rect).copy()
-                self.status.config(text="Secimi surukleyin")
+                self.status.config(text=_t("Seçimi sürükleyin"))
             else:
                 self._cancel_float()
                 self.sel_rect = None
@@ -800,7 +995,7 @@ class CropEditor:
             self.size_label.config(text=f"{self.orig_w}x{self.orig_h}")
             self._calc_base_scale()
             self._render()
-            self.status.config(text=f"Goruntu kirpildi: {self.orig_w}x{self.orig_h}")
+            self.status.config(text=_t("Görüntü kırpıldı: {w}x{h}").replace("{w}", str(self.orig_w)).replace("{h}", str(self.orig_h)))
 
         elif self.mode == self.MODE_SELECTION:
             if self.handle_drag:
@@ -820,7 +1015,7 @@ class CropEditor:
                     self.move_dy = 0
                     self._hide_float()
                     self._redraw_sel()
-                    self.status.config(text="Tasi iptal")
+                    self.status.config(text=_t("Taşı iptal"))
                     return
                 self.move_dx = dix
                 self.move_dy = diy
@@ -829,8 +1024,8 @@ class CropEditor:
                 x1, y1, x2, y2 = self.sel_rect
                 self._render()
                 self._show_float(x1 + dix, y1 + diy)
-                self.status.config(text="Tasi: Uygula'ya basin")
-                self.status.config(text="Secim tasindi")
+                self.status.config(text=_t("Taşı: Uygula'ya basın"))
+                self.status.config(text=_t("Seçim taşındı"))
                 return
             x1, y1 = min(self.start_x, e.x), min(self.start_y, e.y)
             x2, y2 = max(self.start_x, e.x), max(self.start_y, e.y)
@@ -849,7 +1044,7 @@ class CropEditor:
             self.btn_dondur.config(state=tk.NORMAL)
             self.btn_flip_h.config(state=tk.NORMAL)
             self.btn_flip_v.config(state=tk.NORMAL)
-            self.status.config(text="Alan secildi")
+            self.status.config(text=_t("Alan seçildi"))
 
         elif self.mode in (self.MODE_LINE, self.MODE_ARROW, self.MODE_ARROW_BOTH):
             if self.line_start:
@@ -937,7 +1132,7 @@ class CropEditor:
                     font = ImageFont.load_default()
                 draw.text((ix, iy), text, fill=self.brush_color, font=font)
                 self._render()
-                self.status.config(text=f"Metin eklendi: \"{text}\"")
+                self.status.config(text=_t('Metin eklendi: "{text}"').replace("{text}", text))
             dlg.destroy()
 
         tk.Button(dlg, text="Ekle", command=on_ok,
@@ -953,7 +1148,7 @@ class CropEditor:
         self.size_label.config(text=f"{self.orig_w}x{self.orig_h}")
         self._calc_base_scale()
         self._render()
-        self.status.config(text="90 derece donduruldu")
+        self.status.config(text=_t("90 derece döndürüldü"))
 
     # ───── Render ─────
     def _render(self):
@@ -984,7 +1179,7 @@ class CropEditor:
             self._render()
             self.crop_rect = None
             self._clear_overlays()
-            self.status.config(text=f"Alan renklendirildi")
+            self.status.config(text=_t("Alan renklendirildi"))
         elif self.sel_content is not None and (self.move_dx or self.move_dy):
             self.history.append(self.img.copy())
             x1, y1, x2, y2 = self.sel_rect
@@ -1003,7 +1198,7 @@ class CropEditor:
             self.copy_mode = False
             self.action_btn.config(state=tk.DISABLED)
             self._render()
-            self.status.config(text="Tasi uygulandi")
+            self.status.config(text=_t("Taşı uygulandı"))
 
     def _sel_fill(self):
         if not self.sel_rect:
@@ -1015,7 +1210,7 @@ class CropEditor:
         draw.rectangle([x1, y1, x2, y2], fill=self.brush_color)
         self._render()
         self._redraw_sel()
-        self.status.config(text="Alan boyandi")
+        self.status.config(text=_t("Alan boyandı"))
 
     def _sel_cut(self):
         if not self.sel_rect:
@@ -1027,7 +1222,7 @@ class CropEditor:
         draw.rectangle([x1, y1, x2, y2], fill="white")
         self._render()
         self._redraw_sel()
-        self.status.config(text="Alan kesildi")
+        self.status.config(text=_t("Alan kesildi"))
 
     def _sel_copy(self):
         if not self.sel_rect:
@@ -1038,7 +1233,7 @@ class CropEditor:
         self._redraw_sel()
         self._show_float(self.sel_rect[0], self.sel_rect[1])
         self.action_btn.config(state=tk.NORMAL)
-        self.status.config(text="Kopya olustu, Uygula ile yapistirin")
+        self.status.config(text=_t("Kopya oluştu, Uygula ile yapıştırın"))
 
     def _sel_flip_h(self):
         if not self.sel_rect:
@@ -1053,7 +1248,7 @@ class CropEditor:
         self.img.paste(flipped, (x1, y1))
         self._render()
         self._redraw_sel()
-        self.status.config(text="Yatay yansitildi")
+        self.status.config(text=_t("Yatay yansıtıldı"))
 
     def _sel_flip_v(self):
         if not self.sel_rect:
@@ -1068,7 +1263,7 @@ class CropEditor:
         self.img.paste(flipped, (x1, y1))
         self._render()
         self._redraw_sel()
-        self.status.config(text="Dikey yansitildi")
+        self.status.config(text=_t("Dikey yansıtıldı"))
 
     def _sel_rotate(self):
         if not self.sel_rect:
@@ -1099,10 +1294,10 @@ class CropEditor:
         self._hide_sel()
         self._redraw_sel()
         self._render()
-        self.status.config(text=f"Alan d\xf6nd\xfcr\xfcld\xfc: {angle}\xb0")
+        self.status.config(text=_t("Alan d\xf6nd\xfcr\xfcld\xfc: {angle}\xb0").replace("{angle}", str(angle)))
 
     def _enter_move(self):
-        self.status.config(text="Secimi surukleyip birakin")
+        self.status.config(text=_t("Seçimi sürükleyip bırakın"))
 
     def _in_sel_canvas(self, cx, cy):
         if not self.sel_rect:
@@ -1221,13 +1416,13 @@ class CropEditor:
             self.btn_flip_h.config(state=tk.DISABLED)
             self.btn_flip_v.config(state=tk.DISABLED)
             self.action_btn.config(state=tk.DISABLED)
-            self.status.config(text="Geri alindi")
+            self.status.config(text=_t("Geri alındı"))
 
     def _save(self):
         self.img.save(self.image_path)
         if self.on_save:
             self.on_save(self.image_path)
-        messagebox.showinfo("Bitti", "Resim kaydedildi.")
+        messagebox.showinfo(_t("Bitti"), "Resim kaydedildi.")
         self.win.destroy()
 
     def _save_as(self):
@@ -1253,7 +1448,7 @@ class CropEditor:
         self.img.save(path, fmt, **save_kw)
         if self.on_save:
             self.on_save(path)
-        messagebox.showinfo("Bitti", f"Resim kaydedildi:\n{path}")
+        messagebox.showinfo(_t("Bitti"), f"Resim kaydedildi:\n{path}")
         self.win.destroy()
 
 
@@ -1284,7 +1479,7 @@ class App:
             font=("Segoe UI", 18, "bold"),
         ).pack(side=tk.LEFT, padx=20, pady=12)
         tk.Label(
-            header, text="PDF \u2194 Resim D\xf6n\xfc\u015ft\xfcr\xfcc\xfc",
+            header, text=_t("PDF \u2194 Resim Dönüştürücü"),
             fg="#95a5a6", bg="#1a252f", font=("Segoe UI", 10),
         ).pack(side=tk.LEFT, padx=6, pady=12)
 
@@ -1337,6 +1532,9 @@ class App:
         _mkbtn(g3r2, "Hakk\u0131nda", self.show_about, bg="#7f8c8d", width=16).pack(side=tk.LEFT, padx=6)
         _mkbtn(g3r2, "Sa\u011f Tu\u015fa Ekle", self.add_context_menu, bg="#27ae60", width=16).pack(side=tk.LEFT, padx=6)
         _mkbtn(g3r2, "Sa\u011f Tu\u015ftan Kald\u0131r", self.remove_context_menu, bg="#c0392b", width=16).pack(side=tk.LEFT, padx=6)
+        tk.Frame(toolbar, bg="#34495e", width=1).pack(side=tk.LEFT, fill=tk.Y, padx=6)
+        _mkbtn(g3r2, "EN" if _current_lang == "tr" else "TR",
+               self._toggle_lang, bg="#34495e", width=6).pack(side=tk.LEFT, padx=6)
 
         # ─── Thumbnail area ───
         container = tk.Frame(self.root, bg="#ecf0f1")
@@ -1365,13 +1563,13 @@ class App:
         status_bar.pack_propagate(False)
 
         self.status_label = tk.Label(
-            status_bar, text="Haz\u0131r", bg="#f8f9fa", fg="#555",
+            status_bar, text=_t("Haz\u0131r"), bg="#f8f9fa", fg="#555",
             font=("Segoe UI", 9),
         )
         self.status_label.pack(side=tk.LEFT, padx=10)
 
         self.count_label = tk.Label(
-            status_bar, text="0 g\xf6rsel", bg="#f8f9fa", fg="#888",
+            status_bar, text=_t("0 g\xf6rsel"), bg="#f8f9fa", fg="#888",
             font=("Segoe UI", 9),
         )
         self.count_label.pack(side=tk.RIGHT, padx=10)
@@ -1379,7 +1577,14 @@ class App:
         self.canvas_area.bind("<Configure>", lambda e: self._show_thumbs())
 
     def _set_status(self, text):
-        self.status_label.config(text=text)
+        self.status_label.config(text=_t(text))
+
+    def _toggle_lang(self):
+        global _current_lang
+        new = "en" if _current_lang == "tr" else "tr"
+        _set_lang(new)
+        self.root.destroy()
+        restart_app()
 
     def clear_thumbs(self):
         for w in self.scrollable.winfo_children():
@@ -1388,7 +1593,7 @@ class App:
         self.selection = {}
         self.thumb_refs = {}
         self.thumb_frames = {}
-        self.count_label.config(text="0 g\xf6rsel")
+        self.count_label.config(text=_t("0 g\xf6rsel"))
 
     def load_images(self, paths):
         self.clear_thumbs()
@@ -1396,7 +1601,7 @@ class App:
         self.image_dir = os.path.dirname(paths[0]) if paths else None
         self.selection = {p: tk.BooleanVar(value=False) for p in paths}
         self._show_thumbs()
-        self._set_status(f"{len(paths)} g\xf6rsel y\xfcklendi")
+        self._set_status(_t("{n} görsel yüklendi").replace("{n}", str(len(paths))))
         self.count_label.config(text=f"{len(paths)} g\xf6rsel")
 
     def _show_thumbs(self, *_):
@@ -1498,7 +1703,7 @@ class App:
             target = best_idx if best_idx < self._drag_source_idx else best_idx - 1
             self.images.insert(target, item)
             self._show_thumbs()
-            self._set_status("S\u0131ralama g\xfcncellendi")
+            self._set_status(_t("Sıralama güncellendi"))
         del self._drag_source_path
         del self._drag_widget
 
@@ -1507,7 +1712,7 @@ class App:
         if not path:
             return
 
-        self._set_status("PDF i\u015fleniyor...")
+        self._set_status(_t("PDF işleniyor..."))
         self.root.update()
         try:
             os.makedirs(RESIMLER_DIR, exist_ok=True)
@@ -1533,8 +1738,8 @@ class App:
             paths.sort(key=lambda x: int(x.rsplit("_", 1)[1].rsplit(".", 1)[0]))
             self.load_images(paths)
         except Exception as e:
-            self._set_status(f"Hata: {e}")
-            messagebox.showerror("Hata", str(e))
+            self._set_status(_t("Hata: {e}").replace("{e}", str(e)))
+            messagebox.showerror(_t("Hata"), str(e))
 
     def open_images(self):
         paths = filedialog.askopenfilenames(
@@ -1551,7 +1756,7 @@ class App:
         try:
             doc = fitz.open(path)
         except Exception as e:
-            messagebox.showerror("Hata", f"PDF a\xe7\x0131lamad\u0131: {e}")
+            messagebox.showerror(_t("Hata"), f"PDF a\xe7\x0131lamad\u0131: {e}")
             return
         dlg = tk.Toplevel(self.root)
         dlg.title(f"PDF Metin D\xfczenle - {os.path.basename(path)}")
@@ -1605,7 +1810,7 @@ class App:
                                     ))
                     page_blocks[pi] = blks
                 except Exception as e:
-                    messagebox.showerror("Hata", str(e))
+                    messagebox.showerror(_t("Hata"), str(e))
                     return
             blocks_data.clear()
             for b in blks:
@@ -1708,9 +1913,9 @@ class App:
                 block_list.delete(idx)
                 block_list.insert(idx, new_text[:60])
                 block_list.selection_set(idx)
-                self._set_status(f"Sayfa {page_var.get()} - blok {idx} g\xfcncellendi")
+                self._set_status(_t("Sayfa {n} - blok {idx} güncellendi").replace("{n}", str(page_var.get())).replace("{idx}", str(idx)))
             except Exception as e:
-                messagebox.showerror("Hata", f"Uygulanamad\u0131: {e}")
+                messagebox.showerror(_t("Hata"), f"Uygulanamad\u0131: {e}")
         def _save_pdf():
             out = filedialog.asksaveasfilename(
                 defaultextension=".pdf",
@@ -1724,7 +1929,7 @@ class App:
                 if res:
                     os.startfile(out)
             except Exception as e:
-                messagebox.showerror("Hata", f"Kaydedilemedi: {e}")
+                messagebox.showerror(_t("Hata"), f"Kaydedilemedi: {e}")
         _mkbtn(bottom, "Uygula", _apply, bg="#27ae60", width=10).pack(
             side=tk.LEFT, padx=6, pady=6)
         _mkbtn(bottom, "PDF Kaydet", _save_pdf, bg="#2980b9", width=12).pack(
@@ -1745,16 +1950,16 @@ class App:
 
     def show_about(self):
         messagebox.showinfo(
-            "Hakk\u0131nda",
-            "PDF Image Export\n\n"
-            "Yaz\u0131l\u0131m: Asri Akdeniz\n"
-            "Mail: asriakdeniz@gmail.com"
+            _t("Hakk\u0131nda"),
+            _t("PDF_Create_Export_Edit\n\n"
+               "Yaz\u0131l\u0131m: Asri Akdeniz\n"
+               "Mail: asriakdeniz@gmail.com")
         )
 
     def crop_selected(self):
         selected = [p for p, v in self.selection.items() if v.get()]
         if not selected:
-            messagebox.showwarning("Uyar\u0131", "\xd6nce resim se\xe7in")
+            messagebox.showwarning(_t("Uyarı"), _t("Önce resim seçin"))
             return
 
         def _on_save(p):
@@ -1766,10 +1971,10 @@ class App:
     def make_pdf(self):
         selected = [p for p, v in self.selection.items() if v.get()]
         if not selected:
-            messagebox.showwarning("Uyar\u0131", "\xd6nce resim se\xe7in")
+            messagebox.showwarning(_t("Uyarı"), _t("Önce resim seçin"))
             return
 
-        self._set_status("PDF olu\u015fturuluyor...")
+        self._set_status(_t("PDF oluşturuluyor..."))
         self.root.update()
 
         try:
@@ -1783,16 +1988,16 @@ class App:
             else:
                 images[0].save(pdf_path, "PDF", save_all=True, append_images=images[1:])
             self.root.title(f"PDF_Create_Export_Edit - {os.path.basename(pdf_path)}")
-            self._set_status(f"PDF kaydedildi: {pdf_path}")
-            messagebox.showinfo("Bitti", f"PDF kaydedildi:\n{pdf_path}")
+            self._set_status(_t("PDF kaydedildi: {path}").replace("{path}", pdf_path))
+            messagebox.showinfo(_t("Bitti"), f"PDF kaydedildi:\n{pdf_path}")
         except Exception as e:
-            self._set_status(f"Hata: {e}")
-            messagebox.showerror("Hata", f"PDF olu\u015fturulamad\u0131:\n{e}")
+            self._set_status(_t("Hata: {e}").replace("{e}", str(e)))
+            messagebox.showerror(_t("Hata"), f"PDF olu\u015fturulamad\u0131:\n{e}")
 
     def save_selected(self):
         selected = [p for p, v in self.selection.items() if v.get()]
         if not selected:
-            messagebox.showwarning("Uyar\u0131", "\xd6nce resim se\xe7in")
+            messagebox.showwarning(_t("Uyarı"), _t("Önce resim seçin"))
             return
         out = filedialog.askdirectory(title="Kay\u0131t klas\xf6r\xfc", initialdir=APP_DIR)
         if not out:
@@ -1801,8 +2006,8 @@ class App:
             img = Image.open(p)
             name = os.path.basename(p)
             img.save(os.path.join(out, name))
-        self._set_status(f"{len(selected)} resim kaydedildi")
-        messagebox.showinfo("Bitti", f"{len(selected)} resim kaydedildi.")
+        self._set_status(_t("{n} resim kaydedildi").replace("{n}", str(len(selected))))
+        messagebox.showinfo(_t("Bitti"), f"{len(selected)} resim kaydedildi.")
 
     def select_all(self):
         for v in self.selection.values():
@@ -1821,7 +2026,7 @@ class App:
     def _move_selection(self, direction):
         selected = [(i, p) for i, p in enumerate(self.images) if self.selection[p].get()]
         if not selected:
-            messagebox.showwarning("Uyar\u0131", "\xd6nce resim se\xe7in")
+            messagebox.showwarning(_t("Uyarı"), _t("Önce resim seçin"))
             return
         n = len(self.images)
         new_order = list(self.images)
@@ -1839,7 +2044,7 @@ class App:
                 new_order[i], new_order[i + 1] = new_order[i + 1], new_order[i]
         self.images = new_order
         self._show_thumbs()
-        self._set_status(f"S\u0131ralama g\xfcncellendi")
+        self._set_status(_t("Sıralama güncellendi"))
 
     # ───── Context menu (Windows sag tus - ASRI Tools) ─────
     def add_context_menu(self):
@@ -1888,12 +2093,12 @@ class App:
             _add_entries(
                 r"Software\Classes\SystemFileAssociations\.pdf\shell\ASRITools",
                 r"\.pdf\ASRIToolsContext",
-                [("01PDFResimCikar", "--extract-pdf", "PDF Resim Cikar"),
-                 ("02PDFMetinDuzenle", "--edit-pdf", "PDF Metin Duzenle"),
-                 ("03PDFResimCikarSecimli", "--extract-pdf-gui", "PDF Resim Cikar (Secimli)")]
+                [("01PDFResimCikar", "--extract-pdf", _t("PDF Resim \u00c7\u0131kar")),
+                 ("02PDFMetinDuzenle", "--edit-pdf", _t("PDF Metin D\u00fczenle")),
+                 ("03PDFResimCikarSecimli", "--extract-pdf-gui", _t("PDF Resim \u00c7\u0131kar (Se\u00e7imli)"))]
             )
         except Exception as e:
-            messagebox.showerror("Hata", f"PDF kaydi eklenemedi: {e}")
+            messagebox.showerror(_t("Hata"), _t("PDF kayd\u0131 eklenemedi: {e}").replace("{e}", str(e)))
             return
 
         for ext in _img_exts:
@@ -1901,19 +2106,19 @@ class App:
                 _add_entries(
                     f"Software\\Classes\\SystemFileAssociations\\{ext}\\shell\\ASRITools",
                     f"\\{ext}\\ASRIToolsContext",
-                    [("01ResimDuzenle", "--edit-image", "Resim Duzenle"),
-                     ("02TekPDF", "--combine-pdf", "PDF yap"),
-                     ("03TekTekPDF", "--make-pdf", "Tek Tek PDF yap"),
-                     ("04SecimliPDF", "--edit-multi", "Secimli PDF yap")]
+                    [("01ResimDuzenle", "--edit-image", _t("Resim D\u00fczenle")),
+                     ("02TekPDF", "--combine-pdf", _t("PDF yap")),
+                     ("03TekTekPDF", "--make-pdf", _t("Tek Tek PDF yap")),
+                     ("04SecimliPDF", "--edit-multi", _t("Se\u00e7imli PDF yap"))]
                 )
             except Exception as e:
-                messagebox.showerror("Hata", f"{ext} kaydi eklenemedi: {e}")
+                messagebox.showerror(_t("Hata"), _t("{ext} kayd\u0131 eklenemedi: {e}").replace("{ext}", ext).replace("{e}", str(e)))
                 return
 
         messagebox.showinfo(
-            "Bitti",
-            "ASRI Tools sag tus menusune eklendi.\n"
-            "PDF ve resim dosyalarinda ASRI Tools altinda kullanabilirsiniz."
+            _t("Bitti"),
+            _t("ASRI Tools sa\u011f t\u0131k men\u00fcs\u00fcne eklendi.\n"
+               "PDF ve resim dosyalar\u0131nda ASRI Tools alt\u0131nda kullanabilirsiniz.")
         )
 
     def remove_context_menu(self):
@@ -1944,10 +2149,10 @@ class App:
         for ext, key in targets:
             _del(f"{base}\\{ext}\\shell\\{key}")
             _del(f"{base}\\{ext}\\{key}")
-        messagebox.showinfo("Bitti", "ASRI Tools sag tus menusunden kaldirildi.")
+        messagebox.showinfo(_t("Bitti"), _t("ASRI Tools sağ tık menüsünden kaldırıldı."))
 
     def _extract_pdf(self, path):
-        self._set_status("PDF resimleri cikariliyor...")
+        self._set_status(_t("PDF resimleri çıkarılıyor..."))
         self.root.update()
         try:
             os.makedirs(RESIMLER_DIR, exist_ok=True)
@@ -1973,8 +2178,8 @@ class App:
             paths.sort(key=lambda x: int(x.rsplit("_", 1)[1].rsplit(".", 1)[0]))
             self.load_images(paths)
         except Exception as e:
-            self._set_status(f"Hata: {e}")
-            messagebox.showerror("Hata", f"PDF resimleri cikarilamadi:\n{e}")
+            self._set_status(_t("Hata: {e}").replace("{e}", str(e)))
+            messagebox.showerror(_t("Hata"), f"PDF resimleri cikarilamadi:\n{e}")
 
     def _make_pdf_from_image(self, path):
         base = os.path.splitext(os.path.basename(path))[0]
@@ -1982,7 +2187,7 @@ class App:
         os.makedirs(RESIMLER_DIR, exist_ok=True)
         img = Image.open(path).convert("RGB")
         img.save(pdf_path, "PDF")
-        messagebox.showinfo("Bitti", f"PDF olusturuldu:\n{pdf_path}")
+        messagebox.showinfo(_t("Bitti"), f"PDF olusturuldu:\n{pdf_path}")
 
     def _handle_command_line(self, file_arg, mode=None, extra_files=None):
         if extra_files is None:
@@ -2017,9 +2222,9 @@ class App:
                 self.selection[file_arg].set(True)
                 self.open_editor(file_arg)
             else:
-                messagebox.showwarning("Uyari", f"Desteklenmeyen dosya: {ext}")
+                messagebox.showwarning(_t("Uyarı"), f"Desteklenmeyen dosya: {ext}")
         except Exception as e:
-            messagebox.showerror("Hata", str(e))
+            messagebox.showerror(_t("Hata"), str(e))
 
     def run(self):
         self.root.mainloop()
@@ -2116,7 +2321,7 @@ if __name__ == "__main__":
         except Exception as e:
             root = tk.Tk()
             root.withdraw()
-            messagebox.showerror("Hata", str(e))
+            messagebox.showerror(_t("Hata"), str(e))
             root.destroy()
             sys.exit(0)
 
@@ -2135,7 +2340,7 @@ if __name__ == "__main__":
         except Exception as e:
             root = tk.Tk()
             root.withdraw()
-            messagebox.showerror("Hata", str(e))
+            messagebox.showerror(_t("Hata"), str(e))
             root.destroy()
         sys.exit(0)
 
@@ -2153,7 +2358,7 @@ if __name__ == "__main__":
         except Exception as e:
             root = tk.Tk()
             root.withdraw()
-            messagebox.showerror("Hata", str(e))
+            messagebox.showerror(_t("Hata"), str(e))
             root.destroy()
         sys.exit(0)
 
