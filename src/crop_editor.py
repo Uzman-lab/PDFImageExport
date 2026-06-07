@@ -82,7 +82,8 @@ class CropEditor:
         self.handle_drag = None
 
         self.win = tk.Toplevel(parent)
-        self.win.title(f"{_t('D\xfczenle')} \u2014 {os.path.basename(image_path)}")
+        title_prefix = _t('D\xfczenle')
+        self.win.title(f"{title_prefix} \u2014 {os.path.basename(image_path)}")
         self.win.geometry("1100x760")
         self.win.minsize(900, 600)
 
